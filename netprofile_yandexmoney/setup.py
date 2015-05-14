@@ -15,7 +15,7 @@ requires = [
 setup(
 	name='netprofile_yandexmoney',
 	version='0.3',
-	description='NetProfile Administrative UI - Paypal Module',
+	description='NetProfile Administrative UI - Yandex.Money Module',
 	license='GNU Affero General Public License v3 or later (AGPLv3+)',
 	long_description=README_LOCAL + '\n\n' +  README_GLOBAL,
 	classifiers=[

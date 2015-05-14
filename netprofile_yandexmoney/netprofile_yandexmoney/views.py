@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; tab-width: 4; indent-tabs-mode: t -*-
 #
-# NetProfile: Paypal module - Views
+# NetProfile: Yandex.Money module - Views
 # © Copyright 2013-2014 Alex 'Unik' Unigovsky
 #
 # This file is part of NetProfile.
@@ -61,8 +61,7 @@ _ = TranslationStringFactory('netprofile_yandexmoney')
 
 class ClientRootFactory(RootFactory):
 	def __getitem__(self, name):
-#		raise KeyError('Invalid URL')
-		return 'zzz'
+		raise KeyError('Invalid URL')
 
 @view_config(
 	route_name='yandexmoney.cl.accounts',

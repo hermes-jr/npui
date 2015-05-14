@@ -32,19 +32,22 @@ from netprofile.tpl import TemplateObject
 
 from pyramid.i18n import TranslationStringFactory
 
+import syslog
+
 _ = TranslationStringFactory('netprofile_yandexmoney')
 
-from .models import Test
+#from .models import Test
 
 class Module(ModuleBase):
 	def __init__(self, mmgr):
+		syslog.syslog('YM init message 000000')
 		self.mmgr = mmgr
-#		mmgr.cfg.add_route(
-#			'yandexmoney.cl.accounts',
-#			'/yandexmoney/*traverse',
-#			factory='netprofile_yandexmoney.views.ClientRootFactory',
-#			vhost='client'
-#		)
+		mmgr.cfg.add_route(
+			'yandexmoney.cl.accounts',
+			'/yandexmoney/*traverse',
+			factory='netprofile_yandexmoney.views.ClientRootFactory',
+			vhost='client'
+		)
 		mmgr.cfg.add_translation_dirs('netprofile_yandexmoney:locale/')
 		mmgr.cfg.scan()
 		
@@ -64,6 +67,7 @@ class Module(ModuleBase):
 
 	@property
 	def name(self):
+		syslog.syslog('YM init message aaaaaabbbb name')
 		return _('Yandex.Money')
 
 class Test:
