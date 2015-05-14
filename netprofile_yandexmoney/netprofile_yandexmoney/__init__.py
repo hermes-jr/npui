@@ -34,27 +34,28 @@ from pyramid.i18n import TranslationStringFactory
 
 _ = TranslationStringFactory('netprofile_yandexmoney')
 
+from .models import Test
+
 class Module(ModuleBase):
 	def __init__(self, mmgr):
 		self.mmgr = mmgr
-		mmgr.cfg.add_route(
-			'yandexmoney.cl.accounts',
-			'/yandexmoney1/*traverse',
-			factory='netprofile_yandexmoney.views.ClientRootFactory',
-			vhost='client'
-		)
-		mmgr.cfg.add_route('yandexmoney.cl.docc', '/yandexmoney/docc', vhost='client')
+#		mmgr.cfg.add_route(
+#			'yandexmoney.cl.accounts',
+#			'/yandexmoney/*traverse',
+#			factory='netprofile_yandexmoney.views.ClientRootFactory',
+#			vhost='client'
+#		)
 		mmgr.cfg.add_translation_dirs('netprofile_yandexmoney:locale/')
-		mmgr.cfg.register_block('stashes.cl.block.payment', TemplateObject('netprofile_yandexmoney:templates/client_yandexmoney.mak'))
 		mmgr.cfg.scan()
 		
 
 	@classmethod
 	def get_deps(cls):
-		return ('entities', 'stashes', 'xop')
+		return ('stashes', 'xop')
 
-	def get_models(self):
+	def get_models(cls):
 		return (
+			# Test
 		)
 
 	def get_css(self, request):
@@ -64,3 +65,16 @@ class Module(ModuleBase):
 	@property
 	def name(self):
 		return _('Yandex.Money')
+
+class Test:
+	def __init__(self, provider):
+		syslog.syslog('YM init message aaaaaa')
+		self.provider = provider
+
+	def process_request(self, request, sess):
+		sux = request.POST.get('test', '')
+
+	def generate_response(self, request, xoplist):
+		resp = Response(status='200 OK', content_type='text/plain', charset='UTF-8')
+		return 'shitload of python code'
+

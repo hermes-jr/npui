@@ -36,60 +36,19 @@ from netprofile_xop.models import (
 	ExternalOperationProvider,
 	ExternalOperationState
 )
-from netprofile_entities.models import PhysicalEntity
+#from netprofile_entities.models import PhysicalEntity
 import urllib
 from pyramid.response import Response
-#from pyramid.request import Request
-#from urllib2 import urlopen, Request
 
-class YandexMoneyIPN:
-	
-	def __init__(self, provider):
-		self.provider = provider
-	
-	def process_request(self, request, sess):
-#		sess = DBSession()
-
-		payment_type = request.POST.get('payment_type', '')
-
-		txn_type = request.POST.get('txn_type', '')
-		txn_id = request.POST.get('txn_id', None)
-
-		#TODO: add variable sanity checks
-		if custom is None:
-			xop = ExternalOperation()
-			
-			xop.external_id = txn_id
-			xop.external_account = payer_id
-			xop.provider = self.provider
-	
-			entities = sess.query(PhysicalEntity).filter(PhysicalEntity.email == payer_email)
-	
-			xop.entity = entities[0]
-			xop.stash = xop.entity.stashes[0]
-			xop.difference = mc_gross
-
-			post = request.POST
-			post['cmd'] = '_notify-validate'
-			params = urllib.urlencode(post)
-			req = Request("""https://www.sandbox.paypal.com/cgi-bin/webscr""", params)
-			req.add_header("Content-type", "application/x-www-form-urlencoded")
-			response = urllib.urlopen(req)
-			status = response.read()
-
-			if not status == "VERIFIED":
-				xop.state = ExternalOperationState.canceled
-				return (xop)
-			
-			xop.state = ExternalOperationState.confirmed
-
-		elif txn_id:
-			xop = sess.query(ExternalOperation).filter(ExternalOperation.external_id == txn_id).one()
-			xop.state = ExternalOperationState.confirmed
-
-		xop.state = ExternalOperationState.cleared
-		return [xop]
-
-	def generate_response(self, request, xoplist):
-		resp = Response(status='200 OK', content_type='text/plain', charset='UTF-8')
-		return resp
+#class Test:
+#
+#	def __init__(self, provider):
+#		self.provider = provider
+#
+#	def process_request(self, request, sess):
+#		sux = request.POST.get('test', '')
+#
+#	def generate_response(self, request, xoplist):
+#		resp = Response(status='200 OK', content_type='text/plain', charset='UTF-8')
+#		return 'shitload of python code'
+#

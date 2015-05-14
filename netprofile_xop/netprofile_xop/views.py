@@ -41,12 +41,30 @@ from netprofile.common.factory import RootFactory
 from netprofile.common.hooks import register_hook
 from netprofile.db.connection import DBSession
 
+from pyramid.view import (
+	notfound_view_config,
+	forbidden_view_config,
+	view_config
+)
+
 from .models import (
 	ExternalOperation,
 	ExternalOperationProvider
 )
 
 _ = TranslationStringFactory('netprofile_xop')
+
+@notfound_view_config(vhost='xop', renderer='netprofile_xop:templates/xop_error.mak')
+def xop_notfound(request):
+	loc = get_localizer(request)
+	request.response.status_code = 404
+	tpldef = {
+		'error' : loc.translate(_('Page Not Found'))
+	}
+	request.run_hook('xop.cl.tpldef', tpldef, request)
+	request.run_hook('xop.cl.tpldef.error', tpldef, request)
+	return tpldef
+
 
 @register_hook('core.dpanetabs.stashes.Stash')
 def _dpane_stash_futures(tabs, model, req):
