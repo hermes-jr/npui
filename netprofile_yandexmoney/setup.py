@@ -15,7 +15,7 @@ requires = [
 setup(
 	name='netprofile_yandexmoney',
 	version='0.3',
-	description='NetProfile Administrative UI - Yandex.Money Module',
+	description='NetProfile External Operation Provider - Yandex.Money Module',
 	license='GNU Affero General Public License v3 or later (AGPLv3+)',
 	long_description=README_LOCAL + '\n\n' +  README_GLOBAL,
 	classifiers=[
@@ -38,8 +38,8 @@ setup(
 		'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
 		'Operating System :: OS Independent'
 	],
-	author='Alex Unigovsky',
-	author_email='unik@compot.ru',
+	author='Mikhail Antonov',
+	author_email='hermes@compot.ru',
 	url='https://netprofile.ru',
 	keywords='web wsgi pyramid np netprofile crm billing accounting network isp',
 	packages=find_packages(),

@@ -105,15 +105,43 @@ class ListModules(Lister):
 		self.app.hooks.run_hook('np.cli.module.list', self.app, columns, data)
 		return (columns, sorted(data, key=lambda row: row[0]))
 
-class ShowModule(ShowOne):
+class ShowModule(Lister):
 	"""
 	Show module details.
 	"""
 
 	log = logging.getLogger(__name__)
 
+	def get_parser(self, prog_name):
+		parser = super(ShowModule, self).get_parser(prog_name)
+		parser.add_argument(
+			'name',
+			help='Name of the module to install or a special value \'all\'.'
+		)
+		return parser
+
 	def take_action(self, args):
-		raise RuntimeError('Not implemented.')
+		loc = self.app.locale
+
+		columns = (
+			loc.translate(_('Data')),
+			loc.translate(_('Value'))
+		)
+		data = []
+
+		mm = self.app.mm
+		if len(mm.modules) > 0:
+			mm.rescan()
+		else:
+			mm.scan()
+
+		for mod in mm.modules:
+			if args.name.lower() == 'all' or args.name.lower() == mod:
+				data.append((loc.translate(_('Author')), 'val1'))
+				data.append((loc.translate(_('Copyright')), 'val2'))
+
+		self.app.hooks.run_hook('np.cli.module.show', self.app, columns, data)
+		return (columns, data)
 
 class InstallModule(Command):
 	"""

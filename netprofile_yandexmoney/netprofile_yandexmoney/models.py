@@ -36,19 +36,19 @@ from netprofile_xop.models import (
 	ExternalOperationProvider,
 	ExternalOperationState
 )
-#from netprofile_entities.models import PhysicalEntity
+'''
 import urllib
 from pyramid.response import Response
 
-#class Test:
-#
-#	def __init__(self, provider):
-#		self.provider = provider
-#
-#	def process_request(self, request, sess):
-#		sux = request.POST.get('test', '')
-#
-#	def generate_response(self, request, xoplist):
-#		resp = Response(status='200 OK', content_type='text/plain', charset='UTF-8')
-#		return 'shitload of python code'
-#
+class Test:
+
+	def __init__(self, provider):
+		self.provider = provider
+
+	def process_request(self, request, sess):
+		sux = request.POST.get('test', '')
+
+	def generate_response(self, request, xoplist):
+		resp = Response(status='200 OK', content_type='text/plain', charset='UTF-8')
+		return 'shitload of python code'
+'''

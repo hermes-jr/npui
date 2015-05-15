@@ -40,7 +40,6 @@ _ = TranslationStringFactory('netprofile_yandexmoney')
 
 class Module(ModuleBase):
 	def __init__(self, mmgr):
-		syslog.syslog('YM init message 000000')
 		self.mmgr = mmgr
 		mmgr.cfg.add_route(
 			'yandexmoney.cl.accounts',
@@ -58,7 +57,6 @@ class Module(ModuleBase):
 
 	def get_models(cls):
 		return (
-			# Test
 		)
 
 	def get_css(self, request):
@@ -67,18 +65,19 @@ class Module(ModuleBase):
 
 	@property
 	def name(self):
-		syslog.syslog('YM init message aaaaaabbbb name')
 		return _('Yandex.Money')
 
 class Test:
 	def __init__(self, provider):
-		syslog.syslog('YM init message aaaaaa')
+		syslog.syslog('YM Test init message aaaaaa AAAAA!!!!')
 		self.provider = provider
 
 	def process_request(self, request, sess):
 		sux = request.POST.get('test', '')
 
 	def generate_response(self, request, xoplist):
-		resp = Response(status='200 OK', content_type='text/plain', charset='UTF-8')
-		return 'shitload of python code'
+		body = 'suck it'
+		return Response(body, content_type=str('text/plain'), charset=str('UTF-8'))
+		#resp = Response(status='200 OK', content_type='text/plain', charset='UTF-8')
+		#return resp
 
