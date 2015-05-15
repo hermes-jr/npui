@@ -49,7 +49,7 @@ setup(
 	install_requires=requires,
 	entry_points="""\
 		[netprofile.modules]
-		yandexmoney = netprofile_xop:Module
+		xop = netprofile_xop:Module
 	""",
 	message_extractors={'.' : [
 		('**.py', 'python', None),
