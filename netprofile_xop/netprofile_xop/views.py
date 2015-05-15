@@ -54,6 +54,7 @@ from .models import (
 
 _ = TranslationStringFactory('netprofile_xop')
 
+'''
 @notfound_view_config(vhost='xop', renderer='netprofile_xop:templates/xop_error.mak')
 def xop_notfound(request):
 	loc = get_localizer(request)
@@ -64,7 +65,7 @@ def xop_notfound(request):
 	request.run_hook('xop.cl.tpldef', tpldef, request)
 	request.run_hook('xop.cl.tpldef.error', tpldef, request)
 	return tpldef
-
+'''
 
 @register_hook('core.dpanetabs.stashes.Stash')
 def _dpane_stash_futures(tabs, model, req):
@@ -82,8 +83,8 @@ def _dpane_stash_futures(tabs, model, req):
 
 class ClientRootFactory(RootFactory):
 	def __getitem__(self, uri):
-		if not self.req.user:
-			raise KeyError('Not logged in')
+#		if not self.req.user:
+#			raise KeyError('Not logged in')
 		try:
 			sess = DBSession()
 			try:
@@ -103,13 +104,13 @@ class ClientRootFactory(RootFactory):
 @view_config(
 	route_name='xop.cl.home',
 	name='',
-	context=ExternalOperationProvider,
-	permission='USAGE'
+	context=ExternalOperationProvider
+#	permission='USAGE'
 )
 def xop_request(ctx, request):
 	# TODO: add optional redirect-to-site?
-	if not ctx.can_access(request):
-		raise HTTPForbidden('Access Denied')
+#	if not ctx.can_access(request):
+#		raise HTTPForbidden('Access Denied')
 	gw = ctx.get_gateway()
 	if (not gw) or (not hasattr(gw, 'process_request')):
 		raise HTTPForbidden('Access Denied')

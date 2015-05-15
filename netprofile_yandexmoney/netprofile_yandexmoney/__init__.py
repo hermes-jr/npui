@@ -32,7 +32,7 @@ from netprofile.tpl import TemplateObject
 
 from pyramid.i18n import TranslationStringFactory
 
-import syslog
+from pyramid.response import Response
 
 _ = TranslationStringFactory('netprofile_yandexmoney')
 
@@ -67,13 +67,13 @@ class Module(ModuleBase):
 	def name(self):
 		return _('Yandex.Money')
 
-class Test:
+class Test(object):
 	def __init__(self, provider):
-		syslog.syslog('YM Test init message aaaaaa AAAAA!!!!')
 		self.provider = provider
 
 	def process_request(self, request, sess):
 		sux = request.POST.get('test', '')
+		return []
 
 	def generate_response(self, request, xoplist):
 		body = 'suck it'
