@@ -107,7 +107,7 @@ class ListModules(Lister):
 		self.app.hooks.run_hook('np.cli.module.list', self.app, columns, data)
 		return (columns, sorted(data, key=lambda row: row[0]))
 
-class ShowModule(Lister):
+class ShowModule(ShowOne):
 	"""
 	Show module details.
 	"""
@@ -118,7 +118,7 @@ class ShowModule(Lister):
 		parser = super(ShowModule, self).get_parser(prog_name)
 		parser.add_argument(
 			'name',
-			help='Name of the module to install or a special value \'all\'.'
+			help='Name of the module to inspect.'
 		)
 		return parser
 
@@ -126,10 +126,15 @@ class ShowModule(Lister):
 		loc = self.app.locale
 
 		columns = (
-			loc.translate(_('Data')),
-			loc.translate(_('Value'))
+			loc.translate(_('Module Codename')),
+			loc.translate(_('Summary')),
+			loc.translate(_('Homepage')),
+			loc.translate(_('Author')),
+			loc.translate(_('E-Mail')),
+			loc.translate(_('License')),
+			loc.translate(_('Location'))
 		)
-		data = []
+		data = [None]*len(columns)
 
 		mm = self.app.mm
 		if len(mm.modules) > 0:
@@ -137,34 +142,39 @@ class ShowModule(Lister):
 		else:
 			mm.scan()
 
+		if args.name.lower() not in mm.modules:
+			raise RuntimeError('Seems like module \'%s\' does not exist.' % args.name)
+
 		for mod in mm.modules:
-			if args.name.lower() == 'all' or args.name.lower() == mod:
+			if args.name.lower() == mod:
 				'''
 				Probably not the best method to get metadata, but it works.
 				Needs pkg_resources to be imported.
 				'''
 				modcode = 'netprofile_' + mod
 
-				data.append(('', '')) # Next item
-
-				data.append((loc.translate(_('Module Codename')), modcode))
-
+				data[0] = modcode
 				pkgs = pkg_resources.require(modcode)
 				pkg = pkgs[0]
 
-				for line in pkg.get_metadata_lines('PKG-INFO'):
+				if not pkg or not pkg.has_metadata(pkg_resources.Distribution.PKG_INFO):
+					raise RuntimeError('PKG-INFO not found')
+
+				for line in pkg.get_metadata_lines(pkg_resources.Distribution.PKG_INFO):
 					if ': ' in line:
 						(k, v) = line.split(': ', 1)
 						if k == "Summary":
-							data.append((loc.translate(_('Summary')), v))
+							data[1] = v
+						elif k == "Home-page":
+							data[2] = v
 						elif k == "Author":
-							data.append((loc.translate(_('Author')), v))
+							data[3] = v
 						elif k == "Author-email":
-							data.append((loc.translate(_('E-Mail')), v))
+							data[4] = v
 						elif k == "License":
-							data.append((loc.translate(_('License')), v))
-				
-				data.append((loc.translate(_('Location')), pkg.location))
+							data[5] = v
+
+				data[6] = pkg.location
 		
 		self.app.hooks.run_hook('np.cli.module.show', self.app, columns, data)
 		return (columns, data)
