@@ -150,11 +150,10 @@ class ShowModule(ShowOne):
 		Probably not the best method to get metadata, but it works.
 		Needs pkg_resources to be imported.
 		'''
-		modcode = 'netprofile_' + mod
+		modcode = mm.modules[mod].module_name
 
 		data[0] = modcode
-		pkgs = pkg_resources.require(modcode)
-		pkg = pkgs[0]
+		pkg = pkg_resources.get_distribution(modcode)
 
 		if not pkg or not pkg.has_metadata(pkg_resources.Distribution.PKG_INFO):
 			raise RuntimeError('PKG-INFO not found')
