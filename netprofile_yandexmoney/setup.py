@@ -40,7 +40,7 @@ setup(
 	],
 	author='Mikhail Antonov',
 	author_email='hermes@compot.ru',
-	url='https://netprofile.ru',
+	url='https://github.com/hermes-jr/npui',
 	keywords='web wsgi pyramid np netprofile crm billing accounting network isp',
 	packages=find_packages(),
 	include_package_data=True,

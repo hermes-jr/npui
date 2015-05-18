@@ -126,13 +126,14 @@ class ShowModule(ShowOne):
 		loc = self.app.locale
 
 		columns = (
-			loc.translate(_('Module Codename')),
+			loc.translate(_('Module')),
 			loc.translate(_('Summary')),
 			loc.translate(_('Homepage')),
 			loc.translate(_('Author')),
 			loc.translate(_('E-Mail')),
 			loc.translate(_('License')),
-			loc.translate(_('Location'))
+			loc.translate(_('Location')),
+			loc.translate(_('Version'))
 		)
 		data = [None]*len(columns)
 
@@ -146,14 +147,15 @@ class ShowModule(ShowOne):
 		if mod not in mm.modules:
 			raise RuntimeError('Seems like module \'%s\' does not exist.' % args.name)
 
+		modcode = mm.modules[mod].module_name
+		data[0] = modcode
+
 		'''
 		Probably not the best method to get metadata, but it works.
 		Needs pkg_resources to be imported.
 		'''
-		modcode = mm.modules[mod].module_name
-
-		data[0] = modcode
-		pkg = pkg_resources.get_distribution(modcode)
+		pkg = next(pkg_resources.find_distributions(modcode, only=True))
+		#pkg = pkg_resources.get_distribution(modcode)
 
 		if not pkg or not pkg.has_metadata(pkg_resources.Distribution.PKG_INFO):
 			raise RuntimeError('PKG-INFO not found')
@@ -173,7 +175,8 @@ class ShowModule(ShowOne):
 					data[5] = v
 
 		data[6] = pkg.location
-		
+		data[7] = pkg.parsed_version
+
 		self.app.hooks.run_hook('np.cli.module.show', self.app, columns, data)
 		return (columns, data)
 
