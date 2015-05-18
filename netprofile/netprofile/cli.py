@@ -142,39 +142,38 @@ class ShowModule(ShowOne):
 		else:
 			mm.scan()
 
-		if args.name.lower() not in mm.modules:
+		mod = args.name.lower()
+		if mod not in mm.modules:
 			raise RuntimeError('Seems like module \'%s\' does not exist.' % args.name)
 
-		for mod in mm.modules:
-			if args.name.lower() == mod:
-				'''
-				Probably not the best method to get metadata, but it works.
-				Needs pkg_resources to be imported.
-				'''
-				modcode = 'netprofile_' + mod
+		'''
+		Probably not the best method to get metadata, but it works.
+		Needs pkg_resources to be imported.
+		'''
+		modcode = 'netprofile_' + mod
 
-				data[0] = modcode
-				pkgs = pkg_resources.require(modcode)
-				pkg = pkgs[0]
+		data[0] = modcode
+		pkgs = pkg_resources.require(modcode)
+		pkg = pkgs[0]
 
-				if not pkg or not pkg.has_metadata(pkg_resources.Distribution.PKG_INFO):
-					raise RuntimeError('PKG-INFO not found')
+		if not pkg or not pkg.has_metadata(pkg_resources.Distribution.PKG_INFO):
+			raise RuntimeError('PKG-INFO not found')
 
-				for line in pkg.get_metadata_lines(pkg_resources.Distribution.PKG_INFO):
-					if ': ' in line:
-						(k, v) = line.split(': ', 1)
-						if k == "Summary":
-							data[1] = v
-						elif k == "Home-page":
-							data[2] = v
-						elif k == "Author":
-							data[3] = v
-						elif k == "Author-email":
-							data[4] = v
-						elif k == "License":
-							data[5] = v
+		for line in pkg.get_metadata_lines(pkg_resources.Distribution.PKG_INFO):
+			if ': ' in line:
+				(k, v) = line.split(': ', 1)
+				if k == "Summary":
+					data[1] = v
+				elif k == "Home-page":
+					data[2] = v
+				elif k == "Author":
+					data[3] = v
+				elif k == "Author-email":
+					data[4] = v
+				elif k == "License":
+					data[5] = v
 
-				data[6] = pkg.location
+		data[6] = pkg.location
 		
 		self.app.hooks.run_hook('np.cli.module.show', self.app, columns, data)
 		return (columns, data)
