@@ -41,6 +41,8 @@ from sqlalchemy.exc import ProgrammingError
 
 from netprofile.common.modules import ModuleError
 
+import pkg_resources
+
 _ = TranslationStringFactory('netprofile')
 
 class ListModules(Lister):
@@ -137,9 +139,33 @@ class ShowModule(Lister):
 
 		for mod in mm.modules:
 			if args.name.lower() == 'all' or args.name.lower() == mod:
-				data.append((loc.translate(_('Author')), 'val1'))
-				data.append((loc.translate(_('Copyright')), 'val2'))
+				'''
+				Probably not the best method to get metadata, but it works.
+				Needs pkg_resources to be imported.
+				'''
+				modcode = 'netprofile_' + mod
 
+				data.append(('', '')) # Next item
+
+				data.append((loc.translate(_('Module Codename')), modcode))
+
+				pkgs = pkg_resources.require(modcode)
+				pkg = pkgs[0]
+
+				for line in pkg.get_metadata_lines('PKG-INFO'):
+					if ': ' in line:
+						(k, v) = line.split(': ', 1)
+						if k == "Summary":
+							data.append((loc.translate(_('Summary')), v))
+						elif k == "Author":
+							data.append((loc.translate(_('Author')), v))
+						elif k == "Author-email":
+							data.append((loc.translate(_('E-Mail')), v))
+						elif k == "License":
+							data.append((loc.translate(_('License')), v))
+				
+				data.append((loc.translate(_('Location')), pkg.location))
+		
 		self.app.hooks.run_hook('np.cli.module.show', self.app, columns, data)
 		return (columns, data)
 
