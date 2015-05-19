@@ -73,10 +73,13 @@ class Test(object):
 
 	def process_request(self, request, sess):
 		sux = request.POST.get('test', '')
+		print('AAAAAAAAAAAAAAAAAAAAAAA')
+		print(repr(request.POST))
+		print('AAAAAAAAAAAAAAAAAAAAAAA')
 		return []
 
 	def generate_response(self, request, xoplist):
-		body = 'suck it'
+		body = 'OK'
 		return Response(body, content_type=str('text/plain'), charset=str('UTF-8'))
 		#resp = Response(status='200 OK', content_type='text/plain', charset='UTF-8')
 		#return resp

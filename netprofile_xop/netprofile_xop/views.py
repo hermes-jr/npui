@@ -109,8 +109,8 @@ class ClientRootFactory(RootFactory):
 )
 def xop_request(ctx, request):
 	# TODO: add optional redirect-to-site?
-#	if not ctx.can_access(request):
-#		raise HTTPForbidden('Access Denied')
+	if not ctx.can_access(request):
+		raise HTTPForbidden('Access Denied')
 	gw = ctx.get_gateway()
 	if (not gw) or (not hasattr(gw, 'process_request')):
 		raise HTTPForbidden('Access Denied')

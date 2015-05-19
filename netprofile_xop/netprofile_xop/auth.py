@@ -57,11 +57,6 @@ import hashlib
 
 from zope.interface import implementer
 
-from pyramid.security import (
-	Authenticated,
-	Everyone
-)
-
 from .models import (
 	ExternalOperationProvider,
 	ExternalOperationProviderAuthMethod
@@ -84,7 +79,7 @@ def find_princs(userid, request):
 
 @implementer(IAuthenticationPolicy)
 class XOPBasicAuthenticationPolicy(BasicAuthAuthenticationPolicy):
-	def __init__(self, username, password, realm='Realm', debug=False):
+	def __init__(self, username, password, realm='Realm', debug=True):
 		super(XOPBasicAuthenticationPolicy, self).__init__(self._std_check, realm, debug)
 		self.username = username
 		self.password = password
