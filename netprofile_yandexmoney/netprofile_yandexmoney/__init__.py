@@ -43,6 +43,11 @@ from netprofile_xop.models import (
 	ExternalOperationState
 )
 
+from netprofile_core.models import (
+	GlobalSetting,
+	GlobalSettingSection
+)
+
 import hashlib
 
 class Module(ModuleBase):
@@ -58,7 +63,6 @@ class Module(ModuleBase):
 		'''
 		mmgr.cfg.add_translation_dirs('netprofile_yandexmoney:locale/')
 		mmgr.cfg.scan()
-		
 
 	@classmethod
 	def get_deps(cls):
@@ -69,6 +73,27 @@ class Module(ModuleBase):
 		from netprofile_yandexmoney import models
 		return (
 		)
+
+	@classmethod
+	def get_sql_data(cls, modobj, sess):
+		gss_ym_settings = GlobalSettingSection( # no old id
+			module=modobj,
+			name='Yandex.Money settings',
+			description='Settings for netprofile_yandexmoney module.'
+		)
+
+		sess.add(gss_ym_settings)
+
+		sess.add(GlobalSetting(
+			section=gss_ym_settings,
+			module=modobj,
+			name='ym_sharedsecret',
+			title='Shared secret',
+			type='text',
+			default='',
+			value='',
+			description='Shared secret key for Yandex.Money notifications validation.'
+		))
 
 	def get_css(self, request):
 		return (
@@ -114,8 +139,8 @@ class YandexMoney(object):
 
 		'''
 
-		# FIXME: Urgent! move to settings
-		secret = '----------------------'
+		from netprofile_core import global_setting
+		secret = global_setting('ym_sharedsecret')
 
 		concat = "{}&{}&{}&{}&{}&{}&{}&{}&{}".format(
 		postdata.get('notification_type', ''),
@@ -142,17 +167,14 @@ class YandexMoney(object):
 		if not self._ym_verify_sha1(request.POST):
 			print('Verification failed')
 			xop.state = ExternalOperationState.canceled
-			return [xop]
+			return []
+		print('Verification succeeded')
 
+		xop.external_id = request.POST.get('operation_id', '')
 		xop.difference = request.POST.get('amount', '')
 
 		#xop.state = ExternalOperationState.cleared
 		return [xop]
 
 	def generate_response(self, request, xoplist):
-		print('AAAAAAAAAAAAAAAAAAAA')
-		print(repr(xoplist))
-		print(repr(request))
-		print('AAAAAAAAAAAAAAAAAAAA')
-		#return Response(body, content_type=str('text/plain'), charset=str('UTF-8'))
 		return Response(status=str('200 OK'), content_type=str('text/plain'), charset=str('UTF-8'))
