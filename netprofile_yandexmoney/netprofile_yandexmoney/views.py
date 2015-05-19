@@ -63,6 +63,7 @@ class ClientRootFactory(RootFactory):
 	def __getitem__(self, name):
 		raise KeyError('Invalid URL')
 
+'''
 @view_config(
 	route_name='yandexmoney.cl.accounts',
 	name='',
@@ -77,3 +78,4 @@ def client_list(ctx, request):
 	request.run_hook('access.cl.tpldef', tpldef, request)
 	request.run_hook('access.cl.tpldef.accounts.list', tpldef, request)
 	return tpldef
+'''
