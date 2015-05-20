@@ -98,7 +98,7 @@ class ExternalOperationState(DeclEnum):
 	"""
 	Enumeration of xop state codes
 	"""
-	new			= 'NEW',	_('New'),		10
+	new		= 'NEW',	_('New'),	10
 	checked		= 'CHK',	_('Checked'),	20
 	pending		= 'PND',	_('Pending'),	30
 	confirmed	= 'CNF',	_('Confirmed'), 40
@@ -109,8 +109,8 @@ class ExternalOperationProviderAuthMethod(DeclEnum):
 	"""
 	Enumeration of xop provider auth methods
 	"""
-	http		= 'http',		_('HTTP Basic'),	10
-	md5			= 'req-md5',	_('Request MD5'),	20
+	http		= 'http',	_('HTTP Basic'),	10
+	md5		= 'req-md5',	_('Request MD5'),	20
 	sha1		= 'req-sha1',	_('Request SHA1'),	30
 
 class ExternalOperation(Base):
