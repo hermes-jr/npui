@@ -28,18 +28,18 @@ from __future__ import (
 )
 
 from netprofile.common.modules import ModuleBase
-from netprofile.tpl import TemplateObject
+from netprofile.common.hooks import register_hook
 
 from pyramid.i18n import TranslationStringFactory
+_ = TranslationStringFactory('netprofile_yandexmoney')
 
 import logging
-
-_ = TranslationStringFactory('netprofile_yandexmoney')
 logger = logging.getLogger(__name__)
 
 from pyramid.response import Response
 
 from netprofile.db.connection import DBSession
+
 from netprofile_xop.models import (
 	ExternalOperation,
 	ExternalOperationProvider,
@@ -52,6 +52,21 @@ from netprofile_core.models import (
 )
 
 import hashlib
+
+@register_hook('np.cli.module.install.after')
+def _ym_module_after_install(app, mod, sess, ret):
+	'''Adds this XOP provider to database.
+	User doesn't and shouldn't know settings
+	'''
+	if ret:
+		logger.debug('Running \'%s\' module postinstall', mod)
+		xopp = ExternalOperationProvider()
+		xopp.uri = 'yandexmoney'
+		xopp.name = _('Yandex.Money')
+		xopp.sname = xopp.name
+		xopp.gwclass = 'ymgate'
+		xopp.enabled = True
+		xopp.descr = _('Yandex.Money') + _('external operations provider')
 
 class Module(ModuleBase):
 	def __init__(self, mmgr):
