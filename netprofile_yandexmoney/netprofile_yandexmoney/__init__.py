@@ -58,15 +58,19 @@ def _ym_module_after_install(app, mod, sess, ret):
 	'''Adds this XOP provider to database.
 	User doesn't and shouldn't know settings
 	'''
-	if ret:
-		logger.debug('Running \'%s\' module postinstall', mod)
-		xopp = ExternalOperationProvider()
-		xopp.uri = 'yandexmoney'
-		xopp.name = _('Yandex.Money')
-		xopp.sname = xopp.name
-		xopp.gwclass = 'ymgate'
-		xopp.enabled = True
-		xopp.descr = _('Yandex.Money') + _('external operations provider')
+	logger.debug('Running \'%s\' module postinstall', mod)
+
+#	if ret:
+	xopp = ExternalOperationProvider()
+	xopp.uri = '/sajdhasjkdhasdas'
+	xopp.name = 'askjdhjkasdjkasasdas'
+	xopp.short_name = 'bdfxazxhsds'
+	xopp.gateway_class = 'sahdajhsdasd'
+	xopp.enabled = True
+	xopp.descr = 'ns provider sdad'
+
+	sess.add(xopp)
+	sess.flush()
 
 class Module(ModuleBase):
 	def __init__(self, mmgr):
