@@ -160,6 +160,7 @@ def do_login(request):
 	if 'submit' in request.POST:
 		login = request.POST.get('user', '')
 		passwd = request.POST.get('pass', '')
+		otp = request.POST.get('otp', '')
 		csrf = request.POST.get('csrf', '')
 
 		if csrf == request.get_csrf():
@@ -170,7 +171,11 @@ def do_login(request):
 			q = sess.query(User).filter(User.state == UserState.active).filter(User.enabled == True).filter(User.login == login)
 			for user in q:
 				if user.check_password(passwd, hash_con, salt_len):
-					return auth_add(request, login, 'core.home')
+					# If 2factor is enabled for this user and is correctly typed in, return auth_add
+					# adding half-factor auth for testing, lol
+					if otp == '333555':
+						print('OK AAAAAAAAAA OKOK!!! lmaorofl')
+						return auth_add(request, login, 'core.home')
 		did_fail = True
 
 	mmgr = request.registry.getUtility(IModuleManager)

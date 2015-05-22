@@ -27,8 +27,14 @@
 		</div>
 	</div>
 	<div class="elem">
+		<label for="otp" class="x-form-item-label x-form-item-label-default x-unselectable">${_('Google Authenticator code') | h}</label>
+		<div class="x-form-text-wrap x-form-text-wrap-default">
+			<input type="text" class="text x-form-field x-form-text x-form-text-default" id="otp" name="otp" value="" size="28" maxlength="8" tabindex="3" autocomplete="off" />
+		</div>
+	</div>
+	<div class="elem">
 		<label for="__locale" class="x-form-item-label x-form-item-label-default x-unselectable">${_('Language') | h}</label>
-		<select class="text" id="__locale" name="__locale" tabindex="3" class="x-form-field x-form-text x-form-text-default" autocomplete="off">
+		<select class="text" id="__locale" name="__locale" tabindex="4" class="x-form-field x-form-text x-form-text-default" autocomplete="off">
 % for lang in req.locales:
 			<option label="${'%s [%s]' % (req.locales[lang].english_name, req.locales[lang].display_name) | h}" value="${lang | h}"\
 % if lang == cur_loc:
@@ -39,7 +45,7 @@
 		</select>
 	</div>
 	<div class="footer">
-		<button type="submit" id="submit" name="submit" title="Log In" tabindex="4">${_('Log In') | h}</button>
+		<button type="submit" id="submit" name="submit" title="Log In" tabindex="5">${_('Log In') | h}</button>
 	</div>
 </div>
 </form>
