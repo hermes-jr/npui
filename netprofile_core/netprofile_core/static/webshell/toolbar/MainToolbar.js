@@ -18,7 +18,9 @@ Ext.define('NetProfile.toolbar.MainToolbar', {
 	toolsTipText: 'Various tools and windows',
 	logoutText: 'Log out',
 	logoutTipText: 'Log out of the application and return to login screen.',
+	authMgmtText: 'Authorization management',
 	chPassText: 'Change password',
+	gen2FactorQRCodeText: 'Generate QR code',
 	chLangText: 'Change language',
 	showConsoleText: 'Show console',
 	aboutText: 'About…',
@@ -40,11 +42,31 @@ Ext.define('NetProfile.toolbar.MainToolbar', {
 					}
 				}, '-', {
 					xtype: 'menuitem',
+					showSeparator: false,
 					iconCls: 'ico-lock',
-					text: this.chPassText,
-					handler: function(el, ev)
+					text: this.authMgmtText,
+					menu:
 					{
-						NetProfile.changePassword();
+						xtype: 'menu',
+						plain: true,
+						showSeparator: false,
+						items: [{
+							xtype: 'menuitem',
+							iconCls: 'ico-lock',
+							text: this.chPassText,
+							handler: function(el, ev)
+							{
+								NetProfile.changePassword();
+							}
+						}, {
+							xtype: 'menuitem',
+							iconCls: 'ico-lock',
+							text: this.gen2FactorQRCodeText,
+							handler: function(el, ev)
+							{
+								NetProfile.gen2FactorQRCode();
+							}
+						}]
 					}
 				}, {
 					xtype: 'menuitem',

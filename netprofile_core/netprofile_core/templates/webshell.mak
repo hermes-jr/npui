@@ -195,6 +195,10 @@ Ext.require([
 		});
 		win.show();
 	};
+	NetProfile.gen2FactorQRCode = function()
+	{
+		alert('Will be done!');
+	};
 
 	NetProfile.showConsole = function()
 	{

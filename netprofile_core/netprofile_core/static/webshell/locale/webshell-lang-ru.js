@@ -135,7 +135,9 @@ Ext.onReady(function()
 		toolsTipText: 'Различные второстепенные окна и настройки.',
 		logoutText: 'Выход',
 		logoutTipText: 'Выйти из системы.',
+		authMgmtText: 'Управление паролями',
 		chPassText: 'Изменить пароль',
+		gen2FactorQRCodeText: 'Сгенерировать QR код',
 		chLangText: 'Переключение языка',
 		showConsoleText: 'Показать консоль',
 		aboutText: 'О программе…'

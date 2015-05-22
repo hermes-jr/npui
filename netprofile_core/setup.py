@@ -12,6 +12,7 @@ README_GLOBAL = open(os.path.join(here, 'README-NP.rst')).read()
 requires = [
 	'setuptools',
 	'cracklib',
+	'otpauth',
 	'netprofile >= 0.3'
 ]
 
