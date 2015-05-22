@@ -58,9 +58,12 @@ def _ym_module_after_install(app, mod, sess, ret):
 	'''Adds this XOP provider to database.
 	User doesn't and shouldn't know settings
 	'''
+	if not ret:
+		# Installation process already failed
+		return
+
 	logger.debug('Running \'%s\' module postinstall', mod)
 
-#	if ret:
 	xopp = ExternalOperationProvider()
 	xopp.uri = '/sajdhasjkdhasdas'
 	xopp.name = 'askjdhjkasdjkasasdas'
@@ -71,6 +74,7 @@ def _ym_module_after_install(app, mod, sess, ret):
 
 	sess.add(xopp)
 	sess.flush()
+	ret = True
 
 class Module(ModuleBase):
 	def __init__(self, mmgr):
@@ -165,16 +169,17 @@ class YandexMoney(object):
 
 		xopid = postdata.get('operation_id', '')
 
-		concat = "{}&{}&{}&{}&{}&{}&{}&{}&{}".format(
-		postdata.get('notification_type', ''),
-		xopid,
-		postdata.get('amount', ''),
-		postdata.get('currency', ''),
-		postdata.get('datetime', ''),
-		postdata.get('sender', ''),
-		postdata.get('codepro', ''),
-		secret,
-		postdata.get('label', ''))
+		concat = '&'.join((
+			postdata.get('notification_type', ''),
+			xopid,
+			postdata.get('amount', ''),
+			postdata.get('currency', ''),
+			postdata.get('datetime', ''),
+			postdata.get('sender', ''),
+			postdata.get('codepro', ''),
+			secret,
+			postdata.get('label', '')
+		))
 
 		calculated_sha1 = hashlib.sha1(concat.encode()).hexdigest()
 		goal_sha1 = postdata.get('sha1_hash')
