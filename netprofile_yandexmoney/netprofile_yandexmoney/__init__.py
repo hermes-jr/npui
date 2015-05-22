@@ -55,25 +55,13 @@ import hashlib
 
 @register_hook('np.cli.module.install.after')
 def _ym_module_after_install(app, mod, sess, ret):
-	'''Adds this XOP provider to database.
-	User doesn't and shouldn't know settings
+	'''Testing, 20150521
 	'''
 	if not ret:
-		# Installation process already failed
+		# Installation process already failed earlier
 		return
 
 	logger.debug('Running \'%s\' module postinstall', mod)
-
-	xopp = ExternalOperationProvider()
-	xopp.uri = '/sajdhasjkdhasdas'
-	xopp.name = 'askjdhjkasdjkasasdas'
-	xopp.short_name = 'bdfxazxhsds'
-	xopp.gateway_class = 'sahdajhsdasd'
-	xopp.enabled = True
-	xopp.descr = 'ns provider sdad'
-
-	sess.add(xopp)
-	sess.flush()
 	ret = True
 
 class Module(ModuleBase):
@@ -105,9 +93,8 @@ class Module(ModuleBase):
 		gss_ym_settings = GlobalSettingSection( # no old id
 			module=modobj,
 			name='Yandex.Money settings',
-			description='Settings for netprofile_yandexmoney module.'
+			description='Settings for netprofile_yandexmoney module'
 		)
-
 		sess.add(gss_ym_settings)
 
 		sess.add(GlobalSetting(
@@ -118,7 +105,16 @@ class Module(ModuleBase):
 			type='text',
 			default='',
 			value='',
-			description='Shared secret key for Yandex.Money notifications validation.'
+			description='Shared secret key for Yandex.Money notifications validation'
+		))
+
+		sess.add(ExternalOperationProvider(
+			uri = 'yandexmoney',
+			name = 'Yandex.Money',
+			short_name = 'Yandex.Money',
+			gateway_class = 'ymgate',
+			enabled = False,
+			description = 'Yandex.Money external operations provider'
 		))
 
 	def get_css(self, request):
