@@ -178,7 +178,7 @@ Ext.require([
 		var win;
 
 		win = Ext.create('NetProfile.window.CenterWindow', {
-			iconCls: 'ico-lock',
+			iconCls: 'ico-key',
 			items: [{
 				xtype: 'npwizard',
 				shrinkWrap: true,
@@ -197,7 +197,16 @@ Ext.require([
 	};
 	NetProfile.gen2FactorQRCode = function()
 	{
-		alert('Will be done!');
+		var win;
+
+		win = Ext.create('NetProfile.window.CenterWindow', {
+			iconCls: 'ico-qrcode',
+			items: [{
+				xtype: 'component',
+				html: 'Omg<b>HTML</b> hehe'
+			}],
+		});
+		win.show();
 	};
 
 	NetProfile.showConsole = function()
