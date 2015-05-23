@@ -8,11 +8,11 @@ from netprofile.tpl.filters import jsone
 Ext.Loader.setConfig({enabled: true});
 
 Ext.Loader.setPath({
-	'NetProfile'           : 'static/core/webshell',
+	'NetProfile'		   : 'static/core/webshell',
 % for module in modules:
 	'NetProfile.${module}' : 'static/${module}/webshell',
 % endfor
-	'Ext.ux'               : 'static/core/webshell/ux'
+	'Ext.ux'			   : 'static/core/webshell/ux'
 });
 
 Ext.require([
@@ -198,14 +198,40 @@ Ext.require([
 	NetProfile.gen2FactorQRCode = function()
 	{
 		var win;
+		var qrpanel;
+
+		qrpanel = Ext.create('Ext.ux.QrPanel', {
+			textToEncode : '',
+			margin : 20, // blank frame around
+
+
+			qrRenderMethod : 'divs', // rendering method 'canvas' or 'divs'.
+			// default = 'canvas', if supported by browser. Otherwise 'divs'
+
+			typeNumber : 2, // specifies the # of blocks in the code. block count = (typeNumber * 4 + 17).
+			// between 1 and 10. overall width/height in pixels = block count * qrBlocksize.
+			// increase in case of error or no display (check console!).
+			// if not specified and qrErrorCorrectLevel = QRErrorCorrectLevel.L (= default)
+
+		});
 
 		win = Ext.create('NetProfile.window.CenterWindow', {
 			iconCls: 'ico-qrcode',
+			width: 500,
+			height: 500,
+			title: 'QR',
 			items: [{
-				xtype: 'component',
-				html: 'Omg<b>HTML</b> hehe'
+				xtype : 'qrpanel',
+				margin : 20, // blank frame around
+
+				qrRenderMethod : 'divs', // rendering method 'canvas' or 'divs'.
+				// default = 'canvas', if supported by browser. Otherwise 'divs'
+				qrBlocksize : 4, // width [pixels] of an individual block
+				qrErrorCorrectLevel : 'M',
+				textToEncode : 'Hello world'
 			}],
 		});
+
 		win.show();
 	};
 
@@ -815,7 +841,7 @@ Ext.require([
 			type: 'direct',
 			api: {
 				create:  NetProfile.api.MenuTree.${menu.direct}_create || Ext.emptyFn,
-				read:    NetProfile.api.MenuTree.${menu.direct}_read || Ext.emptyFn,
+				read:	NetProfile.api.MenuTree.${menu.direct}_read || Ext.emptyFn,
 				update:  NetProfile.api.MenuTree.${menu.direct}_update || Ext.emptyFn,
 				destroy: NetProfile.api.MenuTree.${menu.direct}_delete || Ext.emptyFn
 			},
@@ -866,7 +892,7 @@ Ext.require([
 		alias: 'proxy.${module}_${model}',
 		api: {
 			create:  NetProfile.api.${model}['create'],
-			read:    NetProfile.api.${model}['read'],
+			read:	NetProfile.api.${model}['read'],
 			update:  NetProfile.api.${model}['update'],
 			destroy: NetProfile.api.${model}['delete']
 		},
@@ -1049,9 +1075,9 @@ Ext.require([
 					Ext.log.info('SockJS connected');
 % endif
 					var msg = {
-						type:    'auth',
-						user:    NetProfile.currentUser,
-						uid:     NetProfile.currentUserId,
+						type:	'auth',
+						user:	NetProfile.currentUser,
+						uid:	 NetProfile.currentUserId,
 						session: NetProfile.currentSession
 					};
 					rt_sock.send(Ext.JSON.encode(msg));

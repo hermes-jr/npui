@@ -13,7 +13,6 @@ requires = [
 	'setuptools',
 	'cracklib',
 	'otpauth',
-	'qrcode',
 	'netprofile >= 0.3'
 ]
 
