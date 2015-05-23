@@ -52,7 +52,7 @@ Ext.define('NetProfile.toolbar.MainToolbar', {
 						showSeparator: false,
 						items: [{
 							xtype: 'menuitem',
-							iconCls: 'ico-lock',
+							iconCls: 'ico-key',
 							text: this.chPassText,
 							handler: function(el, ev)
 							{
@@ -60,7 +60,7 @@ Ext.define('NetProfile.toolbar.MainToolbar', {
 							}
 						}, {
 							xtype: 'menuitem',
-							iconCls: 'ico-lock',
+							iconCls: 'ico-qrcode',
 							text: this.gen2FactorQRCodeText,
 							handler: function(el, ev)
 							{
