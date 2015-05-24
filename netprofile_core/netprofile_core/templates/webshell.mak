@@ -238,12 +238,14 @@ Ext.require([
 				showNavigation: true,
 				wizardCls: 'User',
 				createApi: 'get_chtotp_wizard',
-//				submitApi: 'change_password',
-//				validateApi: 'ChangePassword',
-//				afterSubmit: function(data)
-//				{
-//					NetProfile.logOut(false);
-//				}
+				submitApi: 'change_totp_secret',
+				validateApi: 'ChangeTotpSecret',
+				afterSubmit: function(data)
+				{
+					// NetProfile.logOut(false);
+					win.close();
+					alert('ok');
+				}
 			}],
 		});
 		win.show();

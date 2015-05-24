@@ -868,7 +868,7 @@ class User(Base):
 		ctx.update(('%s:%s:%s' % (self.login, realm, self.mod_pw)).encode())
 		return ctx.hexdigest()
 
-	def generate_totp_secret(self, request):
+	def generate_totp_secret(self, secret_len = 21, system_rng=True):
 		if system_rng:
 			try:
 				rng = random.SystemRandom()
@@ -877,9 +877,8 @@ class User(Base):
 		else:
 			rng = random
 
-		secret_len = int(request.registry.settings.get('netprofile.auth.totp_secret_length', 21))
 		secr = ''.join(rng.choice(string.printable) for i in range(secret_len))
-		return b32encode(secr)
+		return base64.b32encode(secr.encode())
 
 	def check_password(self, pwd, hash_con='sha1', salt_len=4):
 		if isinstance(pwd, str):

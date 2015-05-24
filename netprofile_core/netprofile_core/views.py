@@ -470,17 +470,17 @@ def dyn_user_chtotp_wizard(request):
 		Step(
 			ExtJSWizardField({
 				'xtype'      : 'passwordfield',
-				'name'       : 'curpass',
+				'name'       : 'curpassnnnnn',
 				'allowBlank' : False,
 				'triggers'   : None,
-				'fieldLabel' : loc.translate(_('Current password')),
+				'fieldLabel' : 'Current password nnn',
 				'maxLength'  : 255,
 				'value'      : '',
 				'emptyValue' : ''
 			}),
 			id='new_secret', title=_('New secret'),
 			on_prev='identity_check',
-			on_submit=_wiz_user_totp_submit('newtotpsecret')
+			on_submit=dyn_user_chtotp_secret_submit
 		),
 		title=_('Manage 2 factor authentication'),
 		validator='ChangeTotpSecret'
@@ -528,6 +528,21 @@ def _wiz_user_totp_generic_next(wiz, em, step, act, val, req):
 	'''
 	return ret
 
+@extdirect_method('User', 'change_totp_secret', request_as_last_param=True, permission='USAGE', session_checks=False)
+def dyn_user_chtotp_secret_submit(values, request):
+	user = request.user
+	cfg = request.registry.settings
+
+	secret_len = int(cfg.get('netprofile.auth.totp_secret_length', 21))
+	user.totp_secret = user.generate_totp_secret(secret_len)
+	print(repr(user.totp_secret))
+
+	return {
+		'success' : True,
+		'action'  : { 'exec' : 'afterSubmit' }
+	}
+
+# wtf is this and previous function?
 def _wiz_user_totp_submit(action):
 	def _wiz_user_totp_submit_hdl(wiz, em, step, act, val, req):
 		'''
