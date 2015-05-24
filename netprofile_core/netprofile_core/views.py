@@ -105,6 +105,8 @@ from pyramid.i18n import (
 	get_localizer
 )
 
+from otpauth import OtpAuth
+
 _ = TranslationStringFactory('netprofile_core')
 
 if PY3:
@@ -173,6 +175,8 @@ def do_login(request):
 				if user.check_password(passwd, hash_con, salt_len):
 					# If 2factor is enabled for this user and is correctly typed in, return auth_add
 					# adding half-factor auth for testing, lol
+					# otpauth = OtpAuth('secret')
+					# if auth.valid_totp(otp):
 					if otp == '333555':
 						print('OK AAAAAAAAAA OKOK!!! lmaorofl')
 						return auth_add(request, login, 'core.home')

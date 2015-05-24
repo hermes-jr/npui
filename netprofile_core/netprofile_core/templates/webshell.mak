@@ -29,6 +29,7 @@ Ext.require([
 	'Ext.util.DelayedTask',
 	'Ext.util.LocalStorage',
 	'Ext.Ajax',
+	'Ext.ux.QrPanel',
 % for i_ajs in res_ajs:
 	${i_ajs | jsone},
 % endfor
@@ -198,37 +199,26 @@ Ext.require([
 	NetProfile.gen2FactorQRCode = function()
 	{
 		var win;
-		var qrpanel;
-
-		qrpanel = Ext.create('Ext.ux.QrPanel', {
-			textToEncode : '',
-			margin : 20, // blank frame around
-
-
-			qrRenderMethod : 'divs', // rendering method 'canvas' or 'divs'.
-			// default = 'canvas', if supported by browser. Otherwise 'divs'
-
-			typeNumber : 2, // specifies the # of blocks in the code. block count = (typeNumber * 4 + 17).
-			// between 1 and 10. overall width/height in pixels = block count * qrBlocksize.
-			// increase in case of error or no display (check console!).
-			// if not specified and qrErrorCorrectLevel = QRErrorCorrectLevel.L (= default)
-
-		});
 
 		win = Ext.create('NetProfile.window.CenterWindow', {
 			iconCls: 'ico-qrcode',
-			width: 500,
-			height: 500,
-			title: 'QR',
+			maximizable: false,
+			layout: {
+				type: 'vbox',
+				align: 'center'
+			},
+			title: 'QR code demo',
 			items: [{
 				xtype : 'qrpanel',
-				margin : 20, // blank frame around
-
-				qrRenderMethod : 'divs', // rendering method 'canvas' or 'divs'.
-				// default = 'canvas', if supported by browser. Otherwise 'divs'
-				qrBlocksize : 4, // width [pixels] of an individual block
-				qrErrorCorrectLevel : 'M',
-				textToEncode : 'Hello world'
+				margin : 16,
+				qrRenderMethod : 'divs',
+				typeNumber : 4, // specifies the # of blocks in the code. block count = (typeNumber * 4 + 17).
+				// between 1 and 10. overall width/height in pixels = block count * qrBlocksize.
+				// increase in case of error or no display (check console!).
+				// if not specified and qrErrorCorrectLevel = QRErrorCorrectLevel.L (= default)
+				qrBlocksize : 10, // width [pixels] of an individual block
+				qrErrorCorrectLevel : 'L',
+				textToEncode : 'Hello world Something something else'
 			}],
 		});
 
