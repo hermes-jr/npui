@@ -198,8 +198,8 @@ Ext.require([
 	};
 	NetProfile.gen2FactorQRCode = function()
 	{
-		/*
 		// Testing:
+		/*
 		var win;
 
 		win = Ext.create('NetProfile.window.CenterWindow', {
@@ -211,16 +211,16 @@ Ext.require([
 			},
 			title: 'QR code demo',
 			items: [{
-				xtype : 'qrpanel',
-				margin : 16,
-				qrRenderMethod : 'divs',
-				typeNumber : 4, // specifies the # of blocks in the code. block count = (typeNumber * 4 + 17).
+				xtype: 'qrpanel',
+				margin: 16,
+				qrRenderMethod: 'divs',
+				typeNumber: 7, // specifies the # of blocks in the code. block count = (typeNumber * 4 + 17).
 				// between 1 and 10. overall width/height in pixels = block count * qrBlocksize.
 				// increase in case of error or no display (check console!).
 				// if not specified and qrErrorCorrectLevel = QRErrorCorrectLevel.L (= default)
-				qrBlocksize : 10, // width [pixels] of an individual block
-				qrErrorCorrectLevel : 'L',
-				textToEncode : 'Hello world Something something else'
+				qrBlocksize: 7, // width [pixels] of an individual block
+				qrErrorCorrectLevel: 'L',
+				textToEncode: 'otpauth://totp/...?secret=...etc'
 			}],
 		});
 
@@ -242,9 +242,7 @@ Ext.require([
 				validateApi: 'ChangeTotpSecret',
 				afterSubmit: function(data)
 				{
-					// NetProfile.logOut(false);
 					win.close();
-					alert('ok');
 				}
 			}],
 		});

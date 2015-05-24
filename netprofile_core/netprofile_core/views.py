@@ -72,6 +72,7 @@ from netprofile.db.connection import DBSession
 from netprofile.ext.data import ExtModel
 from netprofile.ext.direct import extdirect_method
 from netprofile.ext.wizards import (
+	CompositeWizardField,
 	ExtJSWizardField,
 	Step,
 	Wizard
@@ -175,10 +176,9 @@ def do_login(request):
 				if user.check_password(passwd, hash_con, salt_len):
 					# If 2factor is enabled for this user and is correctly typed in, return auth_add
 					# adding half-factor auth for testing, lol
-					# otpauth = OtpAuth('secret')
-					# if auth.valid_totp(otp):
-					if otp == '333555':
-						print('OK AAAAAAAAAA OKOK!!! lmaorofl')
+					#if otp == '333555':
+					#otpauth = OtpAuth(user.totp_secret)
+					if user.totp_secret == None or OtpAuth(user.totp_secret).valid_totp(otp):
 						return auth_add(request, login, 'core.home')
 		did_fail = True
 
@@ -452,6 +452,14 @@ def dyn_user_chtotp_wizard(request):
 	loc = get_localizer(request)
 	model = ExtModel(User)
 	user = request.user
+
+	cfg = request.registry.settings
+	secret_len = int(cfg.get('netprofile.auth.totp_secret_length', 21))
+
+	newcode = user.generate_totp_secret(secret_len)
+	otpauth = OtpAuth(newcode)
+	qrcodestr = otpauth.to_uri('totp', user.login, 'NetProfile')
+
 	wiz = Wizard(
 		Step(
 			ExtJSWizardField({
@@ -469,14 +477,27 @@ def dyn_user_chtotp_wizard(request):
 		),
 		Step(
 			ExtJSWizardField({
-				'xtype'      : 'passwordfield',
-				'name'       : 'curpassnnnnn',
-				'allowBlank' : False,
+				'xtype': 'qrpanel',
+				'margin': 16,
+				'qrRenderMethod': 'divs',
+				'typeNumber': 7,
+				'qrBlocksize': 7,
+				'qrErrorCorrectLevel': 'L',
+				'textToEncode': qrcodestr
+			}),
+			ExtJSWizardField({
+				'xtype'      : 'textfield',
+				'name'       : 'newcode',
+				'allowBlank' : True,
+				'readOnly'   : True,
 				'triggers'   : None,
-				'fieldLabel' : 'Current password nnn',
 				'maxLength'  : 255,
-				'value'      : '',
-				'emptyValue' : ''
+				'width'      : '28em',
+				'value'      : newcode.decode()
+			}),
+			ExtJSWizardField({
+				'xtype' : 'label',
+				'html'  : 'This paragraph should<br /> explain about <strong>Google Authenticator</strong><br />And contain step-by-step instructions<br />on inserting this code'
 			}),
 			id='new_secret', title=_('New secret'),
 			on_prev='identity_check',
@@ -487,7 +508,7 @@ def dyn_user_chtotp_wizard(request):
 	)
 	return {
 		'success' : True,
-		'fields'  : wiz.get_cfg(model, request, use_defaults=False),
+		'fields'  : wiz.get_cfg(model, request, use_defaults=True),
 		'title'   : loc.translate(_('Manage 2 factor authentication'))
 	}
 
@@ -534,8 +555,12 @@ def dyn_user_chtotp_secret_submit(values, request):
 	cfg = request.registry.settings
 
 	secret_len = int(cfg.get('netprofile.auth.totp_secret_length', 21))
-	user.totp_secret = user.generate_totp_secret(secret_len)
-	print(repr(user.totp_secret))
+	#user.totp_secret = user.generate_totp_secret(secret_len)
+	#print(repr(user.totp_secret))
+	# test:
+	#otpauth = OtpAuth(user.totp_secret)
+	#qrcodestr = otpauth.to_uri('totp', user.login, 'NetProfile')
+	#print(repr(qrcodestr))
 
 	return {
 		'success' : True,
