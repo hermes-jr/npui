@@ -198,6 +198,8 @@ Ext.require([
 	};
 	NetProfile.gen2FactorQRCode = function()
 	{
+		/*
+		// Testing:
 		var win;
 
 		win = Ext.create('NetProfile.window.CenterWindow', {
@@ -222,6 +224,28 @@ Ext.require([
 			}],
 		});
 
+		win.show();
+		*/
+
+		// Testing 2:
+		var win;
+
+		win = Ext.create('NetProfile.window.CenterWindow', {
+			iconCls: 'ico-qrcode',
+			items: [{
+				xtype: 'npwizard',
+				shrinkWrap: true,
+				showNavigation: true,
+				wizardCls: 'User',
+				createApi: 'get_chtotp_wizard',
+//				submitApi: 'change_password',
+//				validateApi: 'ChangePassword',
+//				afterSubmit: function(data)
+//				{
+//					NetProfile.logOut(false);
+//				}
+			}],
+		});
 		win.show();
 	};
 

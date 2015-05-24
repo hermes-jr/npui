@@ -556,6 +556,23 @@ class User(Base):
 			'ldap_value'    : 'ldap_password'
 		}
 	)
+	totp_secret = Column(
+		'totpsecret',
+		ASCIIString(255),
+		Comment('TOTP secret in Base32'),
+		nullable=True,
+		default=None,
+		server_default=text('NULL'),
+		info={
+			'header_string' : _('TOTP secret'),
+			'secret_value'  : True,
+			'editor_xtype'  : None
+			#'writer'        : 'change_totp_secret',
+			#'validator'     : _validate_user_totp_secret,
+			#'ldap_attr'     : 'userTotpSecret',
+			#'ldap_value'    : 'ldap_totp_secret'
+		}
+	)
 	a1_hash = Column(
 		'a1hash',
 		ASCIIFixedString(32),
@@ -850,6 +867,19 @@ class User(Base):
 		ctx = hashlib.md5()
 		ctx.update(('%s:%s:%s' % (self.login, realm, self.mod_pw)).encode())
 		return ctx.hexdigest()
+
+	def generate_totp_secret(self, request):
+		if system_rng:
+			try:
+				rng = random.SystemRandom()
+			except NotImplementedError:
+				rng = random
+		else:
+			rng = random
+
+		secret_len = int(request.registry.settings.get('netprofile.auth.totp_secret_length', 21))
+		secr = ''.join(rng.choice(string.printable) for i in range(secret_len))
+		return b32encode(secr)
 
 	def check_password(self, pwd, hash_con='sha1', salt_len=4):
 		if isinstance(pwd, str):

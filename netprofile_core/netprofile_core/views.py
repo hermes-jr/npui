@@ -446,6 +446,106 @@ def dyn_user_chpass_validate(ret, values, request):
 				errors['newpass1'].extend(secpol_errors(checkpw, loc))
 	ret['errors'].update(errors)
 
+@extdirect_method('User', 'get_chtotp_wizard', request_as_last_param=True, permission='USAGE', session_checks=False)
+def dyn_user_chtotp_wizard(request):
+	sess = DBSession()
+	loc = get_localizer(request)
+	model = ExtModel(User)
+	user = request.user
+	wiz = Wizard(
+		Step(
+			ExtJSWizardField({
+				'xtype'      : 'passwordfield',
+				'name'       : 'curpass',
+				'allowBlank' : False,
+				'triggers'   : None,
+				'fieldLabel' : loc.translate(_('Current password')),
+				'maxLength'  : 255,
+				'value'      : '',
+				'emptyValue' : ''
+			}),
+			id='identity_check', title=_('Type your current password'),
+			on_next=_wiz_user_totp_generic_next
+		),
+		Step(
+			ExtJSWizardField({
+				'xtype'      : 'passwordfield',
+				'name'       : 'curpass',
+				'allowBlank' : False,
+				'triggers'   : None,
+				'fieldLabel' : loc.translate(_('Current password')),
+				'maxLength'  : 255,
+				'value'      : '',
+				'emptyValue' : ''
+			}),
+			id='new_secret', title=_('New secret'),
+			on_prev='identity_check',
+			on_submit=_wiz_user_totp_submit('newtotpsecret')
+		),
+		title=_('Manage 2 factor authentication'),
+		validator='ChangeTotpSecret'
+	)
+	return {
+		'success' : True,
+		'fields'  : wiz.get_cfg(model, request, use_defaults=False),
+		'title'   : loc.translate(_('Manage 2 factor authentication'))
+	}
+
+@register_hook('core.validators.ChangeTotpSecret')
+def dyn_user_chtotpsecret_validate(ret, values, request):
+	loc = get_localizer(request)
+	errors = defaultdict(list)
+	user = request.user
+	cfg = request.registry.settings
+	hash_con = cfg.get('netprofile.auth.hash', 'sha1')
+	salt_len = int(cfg.get('netprofile.auth.salt_length', 4))
+	old_pass = values.get('curpass')
+	if (not old_pass) or (not user.check_password(old_pass, hash_con, salt_len)):
+		errors['curpass'].append(loc.translate(_('Current password is invalid.')))
+	ret['errors'].update(errors)
+
+def _wiz_user_totp_generic_next(wiz, em, step, act, val, req):
+	ret = {
+		'do'      : 'goto',
+		'goto'    : 'new_secret'
+	}
+	'''
+	if action remove or update... etc
+	if 'etype' in val:
+		ret.update({
+			'goto'    : 'ent_%s1' % val['etype'],
+			'enable'  : [
+				st.id
+				for st in wiz.steps
+				if st.id.startswith('ent_' + val['etype'])
+			],
+			'disable' : [
+				st.id
+				for st in wiz.steps
+				if st.id.startswith('ent_')
+			]
+		})
+	'''
+	return ret
+
+def _wiz_user_totp_submit(action):
+	def _wiz_user_totp_submit_hdl(wiz, em, step, act, val, req):
+		'''
+		xcls = cls
+		if isinstance(xcls, str):
+			xcls = _name_to_class(xcls)
+		sess = DBSession()
+		em = ExtModel(xcls)
+		obj = xcls()
+		em.set_values(obj, val, req, True)
+		sess.add(obj)
+		'''
+		return {
+			'do'     : 'close',
+			'reload' : True
+		}
+	return _wiz_user_totp_submit_hdl
+
 def dpane_simple(model, request):
 	tabs = []
 	request.run_hook(
