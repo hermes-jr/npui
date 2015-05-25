@@ -531,7 +531,7 @@ def dyn_user_chtotp_wizard(request):
 				'width'		: '28em',
 				'value'		: newcode.decode()
 			}),
-			id='new_secret', title=_('New secret'),
+			id='new_secret', title=_('New TOTP secret'),
 			on_prev='identity_check',
 			on_submit=dyn_user_chtotp_secret_submit
 		),
