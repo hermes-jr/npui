@@ -868,7 +868,7 @@ class User(Base):
 		ctx.update(('%s:%s:%s' % (self.login, realm, self.mod_pw)).encode())
 		return ctx.hexdigest()
 
-	def generate_totp_secret(self, secret_len = 21, system_rng=True):
+	def generate_totp_secret(self, secret_len=21, system_rng=True):
 		if system_rng:
 			try:
 				rng = random.SystemRandom()
@@ -878,6 +878,11 @@ class User(Base):
 			rng = random
 
 		secr = ''.join(rng.choice(string.printable) for i in range(secret_len))
+		'''Logically, b32encode should happen in totp_secret writer.
+		However, there might be a situation when QR-code is not working and user has to
+		type in a secret by hand. In this case, base32-encoded string is preferable.
+		This means, we actually store a RAW data in database.
+		'''
 		return base64.b32encode(secr.encode())
 
 	def check_password(self, pwd, hash_con='sha1', salt_len=4):
