@@ -512,13 +512,13 @@ def dyn_user_chtotp_wizard(request):
 				ExtJSWizardField({
 					'xtype'	: 'label',
 					'margin': 16,
-					'html'	: '1. <a target="_blank" href="http://www.google.com/2step">Install Google Authenticator</a> on your phone.<br />\
+					'html'	: loc.translate(_('1. <a target="_blank" href="http://www.google.com/2step">Install Google Authenticator</a> on your phone.<br />\
 						2. Open the Google Authenticator app.<br />\
 						3a. Tap menu, then tap "Set up account", then tap "Scan a barcode".<br />\
 						Your phone will now be in a "scanning" mode. When you are in this mode, scan a barcode at left.<br />\
 						3b. Tap menu, then tap "Set up account", then tap "Enter provided key".<br />\
 						Now type in the key you see in a textfield below.<br />\
-						4. Once you have finished entering the key, click "Next" and enter the 6-digit code to verify.'
+						4. Once you have finished entering the key, click "Next" and enter the 6-digit code to verify.'))
 				})
 			),
 			ExtJSWizardField({
