@@ -174,10 +174,6 @@ def do_login(request):
 			q = sess.query(User).filter(User.state == UserState.active).filter(User.enabled == True).filter(User.login == login)
 			for user in q:
 				if user.check_password(passwd, hash_con, salt_len):
-					# If 2factor is enabled for this user and is correctly typed in, return auth_add
-					# adding half-factor auth for testing, lol
-					#if otp == '333555':
-					#otpauth = OtpAuth(user.totp_secret)
 					if user.totp_secret == None or OtpAuth(user.totp_secret).valid_totp(otp):
 						return auth_add(request, login, 'core.home')
 		did_fail = True
