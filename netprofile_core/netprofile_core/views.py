@@ -568,8 +568,8 @@ def dyn_user_chtotpsecret_validate(ret, values, request):
 	cfg = request.registry.settings
 	hash_con = cfg.get('netprofile.auth.hash', 'sha1')
 	salt_len = int(cfg.get('netprofile.auth.salt_length', 4))
-	old_pass = values.get('curpass')
-	if (not old_pass) or (not user.check_password(old_pass, hash_con, salt_len)):
+	cur_pass = values.get('curpass')
+	if (not cur_pass) or (not user.check_password(cur_pass, hash_con, salt_len)):
 		errors['curpass'].append(loc.translate(_('Current password is invalid.')))
 	ret['errors'].update(errors)
 
@@ -587,19 +587,16 @@ def _wiz_user_totp_generic_next(wiz, em, step, act, val, req):
 def dyn_user_chtotp_secret_submit(values, request):
 	user = request.user
 	cfg = request.registry.settings
-
+	hash_con = cfg.get('netprofile.auth.hash', 'sha1')
+	salt_len = int(cfg.get('netprofile.auth.salt_length', 4))
 	secret_len = int(cfg.get('netprofile.auth.totp_secret_length', 21))
-	#user.totp_secret = user.generate_totp_secret(secret_len)
-	#print(repr(user.totp_secret))
-	# test:
-	#otpauth = OtpAuth(user.totp_secret)
-	#qrcodestr = otpauth.to_uri('totp', user.login, 'NetProfile')
-	#print(repr(qrcodestr))
+	cur_pass = values.get('curpass')
+	if (not cur_pass) or (not user.check_password(cur_pass, hash_con, salt_len)):
+		raise ValueError('Current password is invalid.')
 
 	return {
 		'success' : True,
-		'do'     : 'close',
-		'reload' : True
+		'action'  : { 'exec' : 'afterSubmit' }
 	}
 
 def dpane_simple(model, request):
