@@ -510,8 +510,9 @@ var qrcode = function () {
 				treeRoot = document.createElement('div');
 
 				// specify containing DIV's CSS class, 'QRContainer' as default
-				var nodeAttribute = document.createAttribute('class');
-				nodeAttribute.nodeValue = args.cssClassContainer = args.cssClassContainer || 'QRContainer';
+				//var nodeAttribute = document.createAttribute('class');
+				var nodeValue = args.cssClassContainer = args.cssClassContainer || 'QRContainer';
+				treeRoot.setAttribute('class', nodeValue)
 
 				treeRoot.setAttributeNode(nodeAttribute);
 
@@ -611,9 +612,10 @@ var qrcode = function () {
 
 				for (var attribName in args.divContainerAttributes) {
 
-					nodeAttribute = document.createAttribute(attribName);
-					nodeAttribute.nodeValue = args.divContainerAttributes[attribName];
-					domCanvas.setAttributeNode(nodeAttribute);
+					//nodeAttribute = document.createAttribute(attribName);
+					//nodeAttribute.nodeValue = args.divContainerAttributes[attribName];
+					//domCanvas.setAttributeNode(nodeAttribute);
+					domCanvas.setAttribute(attribName, args.divContainerAttributes[attribName])
 
 				}
 
@@ -2117,7 +2119,8 @@ Ext.define('Ext.ux.QrPanel', {
 		var me = this,
 		vpSize = Ext.getDoc().getViewSize(), // = browser window size
 		smallerDimension = (vpSize.height < vpSize.width ? vpSize.height : vpSize.width),
-		posOld = me.el.getPageBox(); // = current QR code position & size
+		//posOld = me.el.getPageBox(); // = current QR code position & size
+		posOld = me.el.getRegion(); // = current QR code position & size
 
 		// create white full screen mask showing only a big QR
 		// opacity is set later by fadeIn()

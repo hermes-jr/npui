@@ -454,7 +454,7 @@ def dyn_user_chtotp_wizard(request):
 
 	newcode = user.generate_totp_secret(secret_len)
 	otpauth = OtpAuth(newcode)
-	qrcodestr = otpauth.to_uri('totp', user.login, 'NetProfile')
+	qrcodestr = otpauth.to_uri('totp', user.login, 'NetProfile testing')
 
 	'''QrPanel hints:
 		// mandatory configs:
@@ -499,7 +499,7 @@ def dyn_user_chtotp_wizard(request):
 				ExtJSWizardField({
 					'xtype'			: 'qrpanel',
 					'margin'		: 16,
-					'qrRenderMethod'	: 'divs',
+					'qrRenderMethod'	: 'gif',
 					'typeNumber'		: 7,
 					'qrBlocksize'		: 7,
 					'qrErrorCorrectLevel'	: 'L',
@@ -565,16 +565,22 @@ def dyn_user_chtotpsecret_validate(ret, values, request):
 	hash_con = cfg.get('netprofile.auth.hash', 'sha1')
 	salt_len = int(cfg.get('netprofile.auth.salt_length', 4))
 	cur_pass = values.get('curpass')
+	new_code = values.get('newcode') # Should store this not in wizard, but somewhere on the server-side
 	if (not cur_pass) or (not user.check_password(cur_pass, hash_con, salt_len)):
 		errors['curpass'].append(loc.translate(_('Current password is invalid.')))
+
+	verify_me = values.get('totp_verification')
+	if (verify_me):
+		if (not OtpAuth(new_code).valid_totp(verify_me)):
+			errors['totp_verification'].append(loc.translate(_('Verification code is invalid.')))
+
 	ret['errors'].update(errors)
 
 def _wiz_user_totp_generic_next(wiz, em, step, act, val, req):
 	print('aaaaaa')
 	ret = {
 		'do'      : 'goto',
-		'goto'    : 'verify_code'
-		# 'goto'    : 'new_secret'
+		'goto'    : 'new_secret'
 	}
 	print('aaaaaa')
 	return ret
