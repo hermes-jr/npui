@@ -357,34 +357,34 @@ def dyn_user_chpass_wizard(request):
 	wiz = Wizard(
 		Step(
 			ExtJSWizardField({
-				'xtype'      : 'passwordfield',
-				'name'       : 'oldpass',
-				'allowBlank' : False,
-				'triggers'   : None,
-				'fieldLabel' : loc.translate(_('Old password')),
-				'maxLength'  : 255,
-				'value'      : '',
-				'emptyValue' : ''
+				'xtype'		: 'passwordfield',
+				'name'		: 'oldpass',
+				'allowBlank'	: False,
+				'triggers'	: None,
+				'fieldLabel'	: loc.translate(_('Old password')),
+				'maxLength'	: 255,
+				'value'		: '',
+				'emptyValue'	: ''
 			}),
 			ExtJSWizardField({
-				'xtype'      : 'passwordfield',
-				'name'       : 'newpass1',
-				'allowBlank' : False,
-				'triggers'   : None,
-				'fieldLabel' : loc.translate(_('New password')),
-				'maxLength'  : 255,
-				'value'      : '',
-				'emptyValue' : ''
+				'xtype'		: 'passwordfield',
+				'name'		: 'newpass1',
+				'allowBlank'	: False,
+				'triggers'	: None,
+				'fieldLabel'	: loc.translate(_('New password')),
+				'maxLength'	: 255,
+				'value'		: '',
+				'emptyValue'	: ''
 			}),
 			ExtJSWizardField({
-				'xtype'      : 'passwordfield',
-				'name'       : 'newpass2',
-				'allowBlank' : False,
-				'triggers'   : None,
-				'fieldLabel' : loc.translate(_('Repeat password')),
-				'maxLength'  : 255,
-				'value'      : '',
-				'emptyValue' : ''
+				'xtype'		: 'passwordfield',
+				'name'		: 'newpass2',
+				'allowBlank'	: False,
+				'triggers'	: None,
+				'fieldLabel'	: loc.translate(_('Repeat password')),
+				'maxLength'	: 255,
+				'value'		: '',
+				'emptyValue'	: ''
 			})
 		),
 		validator='ChangePassword'
@@ -460,44 +460,76 @@ def dyn_user_chtotp_wizard(request):
 	otpauth = OtpAuth(newcode)
 	qrcodestr = otpauth.to_uri('totp', user.login, 'NetProfile')
 
+	'''QrPanel hints:
+		// mandatory configs:
+		renderTo : Ext.getBody(), // where to render, if not used as a child item
+		textToEncode : 'Hello QR', // text to encode in the pattern, max 271 chars
+
+		// optional configs:
+		title : 'Collapsible', // show a title bar
+		collapsible : true, // user can collapse this
+		margin : 20, // blank frame around
+		qrRenderMethod : 'canvas', // rendering method 'canvas' or 'divs'.
+		// default = 'canvas', if supported by browser. Otherwise 'divs'
+
+		typeNumber : 2, // specifies the # of blocks in the code. block count = (typeNumber * 4 + 17).
+		// between 1 and 10. overall width/height in pixels = block count * qrBlocksize.
+		// increase in case of error or no display (check console!).
+		// if not specified and qrErrorCorrectLevel = QRErrorCorrectLevel.L (= default)
+		qrBlocksize : 4, // width [pixels] of an individual block
+		qrErrorCorrectLevel : 'L', // defines the redundancy in the code.
+		// one of xxx.L (=default), xxx.M, xxx.Q, xxx.H = most redundant
+		qrBackgroundColor : '#000', // CSS color for background. default = black
+		qrForegroundColor : '#fff', // CSS color for foreground. default = white
+		qrNoClickHandler : false // true, if clicks should not be handeled by qrpanel. default = true
+	'''
 	wiz = Wizard(
 		Step(
 			ExtJSWizardField({
-				'xtype'      : 'passwordfield',
-				'name'       : 'curpass',
-				'allowBlank' : False,
-				'triggers'   : None,
-				'fieldLabel' : loc.translate(_('Current password')),
-				'maxLength'  : 255,
-				'value'      : '',
-				'emptyValue' : ''
+				'xtype'		: 'passwordfield',
+				'name'		: 'curpass',
+				'allowBlank'	: False,
+				'triggers'	: None,
+				'fieldLabel'	: loc.translate(_('Current password')),
+				'maxLength'	: 255,
+				'value'		: '',
+				'emptyValue'	: ''
 			}),
 			id='identity_check', title=_('Type your current password'),
 			on_next=_wiz_user_totp_generic_next
 		),
 		Step(
+			CompositeWizardField(
+				ExtJSWizardField({
+					'xtype'			: 'qrpanel',
+					'margin'		: 16,
+					'qrRenderMethod'	: 'divs',
+					'typeNumber'		: 7,
+					'qrBlocksize'		: 7,
+					'qrErrorCorrectLevel'	: 'L',
+					'textToEncode'		: qrcodestr
+				}),
+				ExtJSWizardField({
+					'xtype'	: 'label',
+					'margin': 16,
+					'html'	: '1. <a target="_blank" href="http://www.google.com/2step">Install Google Authenticator</a> on your phone.<br />\
+						2. Open the Google Authenticator app.<br />\
+						3a. Tap menu, then tap "Set up account", then tap "Scan a barcode".<br />\
+						Your phone will now be in a "scanning" mode. When you are in this mode, scan a barcode at left.<br />\
+						3b. Tap menu, then tap "Set up account", then tap "Enter provided key".<br />\
+						Now type in the key you see in a textfield below.<br />\
+						4. Once you have finished entering the key, click "Next" and enter the 6-digit code to verify.'
+				})
+			),
 			ExtJSWizardField({
-				'xtype': 'qrpanel',
-				'margin': 16,
-				'qrRenderMethod': 'divs',
-				'typeNumber': 7,
-				'qrBlocksize': 7,
-				'qrErrorCorrectLevel': 'L',
-				'textToEncode': qrcodestr
-			}),
-			ExtJSWizardField({
-				'xtype'      : 'textfield',
-				'name'       : 'newcode',
-				'allowBlank' : True,
-				'readOnly'   : True,
-				'triggers'   : None,
-				'maxLength'  : 255,
-				'width'      : '28em',
-				'value'      : newcode.decode()
-			}),
-			ExtJSWizardField({
-				'xtype' : 'label',
-				'html'  : 'This paragraph should<br /> explain about <strong>Google Authenticator</strong><br />And contain step-by-step instructions<br />on inserting this code'
+				'xtype'		: 'textfield',
+				'name'		: 'newcode',
+				'allowBlank'	: True,
+				'readOnly'	: True,
+				'triggers'	: None,
+				'maxLength'	: 255,
+				'width'		: '28em',
+				'value'		: newcode.decode()
 			}),
 			id='new_secret', title=_('New secret'),
 			on_prev='identity_check',
