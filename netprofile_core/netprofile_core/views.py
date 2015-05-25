@@ -533,8 +533,24 @@ def dyn_user_chtotp_wizard(request):
 			}),
 			id='new_secret', title=_('New TOTP secret'),
 			on_prev='identity_check',
+			on_next='verify_code'
+		),
+		Step(
+			ExtJSWizardField({
+				'xtype'		: 'textfield',
+				'name'		: 'totp_verification',
+				'allowBlank'	: False,
+				'triggers'	: None,
+				'fieldLabel'	: loc.translate(_('Verification code')),
+				'maxLength'	: 255,
+				'value'		: '',
+				'emptyValue'	: ''
+			}),
+			id='verify_code', title=_('Enter the 6-digit code below:'),
+			on_prev='new_secret',
 			on_submit=dyn_user_chtotp_secret_submit
 		),
+
 		title=_('Manage 2 factor authentication'),
 		validator='ChangeTotpSecret'
 	)
@@ -558,27 +574,13 @@ def dyn_user_chtotpsecret_validate(ret, values, request):
 	ret['errors'].update(errors)
 
 def _wiz_user_totp_generic_next(wiz, em, step, act, val, req):
+	print('aaaaaa')
 	ret = {
 		'do'      : 'goto',
-		'goto'    : 'new_secret'
+		'goto'    : 'verify_code'
+		# 'goto'    : 'new_secret'
 	}
-	'''
-	if action remove or update... etc
-	if 'etype' in val:
-		ret.update({
-			'goto'    : 'ent_%s1' % val['etype'],
-			'enable'  : [
-				st.id
-				for st in wiz.steps
-				if st.id.startswith('ent_' + val['etype'])
-			],
-			'disable' : [
-				st.id
-				for st in wiz.steps
-				if st.id.startswith('ent_')
-			]
-		})
-	'''
+	print('aaaaaa')
 	return ret
 
 @extdirect_method('User', 'change_totp_secret', request_as_last_param=True, permission='USAGE', session_checks=False)
@@ -596,27 +598,9 @@ def dyn_user_chtotp_secret_submit(values, request):
 
 	return {
 		'success' : True,
-		'action'  : { 'exec' : 'afterSubmit' }
+		'do'     : 'close',
+		'reload' : True
 	}
-
-# wtf is this and previous function?
-def _wiz_user_totp_submit(action):
-	def _wiz_user_totp_submit_hdl(wiz, em, step, act, val, req):
-		'''
-		xcls = cls
-		if isinstance(xcls, str):
-			xcls = _name_to_class(xcls)
-		sess = DBSession()
-		em = ExtModel(xcls)
-		obj = xcls()
-		em.set_values(obj, val, req, True)
-		sess.add(obj)
-		'''
-		return {
-			'do'     : 'close',
-			'reload' : True
-		}
-	return _wiz_user_totp_submit_hdl
 
 def dpane_simple(model, request):
 	tabs = []
