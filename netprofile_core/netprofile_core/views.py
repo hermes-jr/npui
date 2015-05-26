@@ -452,8 +452,8 @@ def dyn_user_chtotp_wizard(request):
 	cfg = request.registry.settings
 	secret_len = int(cfg.get('netprofile.auth.totp_secret_length', 21))
 
-	newcode = user.generate_totp_secret(secret_len)
-	otpauth = OtpAuth(newcode)
+	new_secret = user.generate_totp_secret(secret_len)
+	otpauth = OtpAuth(new_secret)
 	qrcodestr = otpauth.to_uri('totp', user.login, 'NetProfile testing')
 
 	'''QrPanel hints:
@@ -519,13 +519,13 @@ def dyn_user_chtotp_wizard(request):
 			),
 			ExtJSWizardField({
 				'xtype'		: 'textfield',
-				'name'		: 'newcode',
+				'name'		: 'newsecret',
 				'allowBlank'	: True,
 				'readOnly'	: True,
 				'triggers'	: None,
 				'maxLength'	: 255,
 				'width'		: '28em',
-				'value'		: newcode.decode()
+				'value'		: new_secret.decode()
 			}),
 			id='new_secret', title=_('New TOTP secret'),
 			on_prev='identity_check',
@@ -565,18 +565,21 @@ def dyn_user_chtotpsecret_validate(ret, values, request):
 	hash_con = cfg.get('netprofile.auth.hash', 'sha1')
 	salt_len = int(cfg.get('netprofile.auth.salt_length', 4))
 	cur_pass = values.get('curpass')
-	new_code = values.get('newcode') # Should store this not in wizard, but somewhere on the server-side
+	new_secret = values.get('newsecret') # Should store this not in wizard, but somewhere on the server-side
 	if (not cur_pass) or (not user.check_password(cur_pass, hash_con, salt_len)):
 		errors['curpass'].append(loc.translate(_('Current password is invalid.')))
 
 	verify_me = values.get('totp_verification')
 	if (verify_me):
-		if (not OtpAuth(new_code).valid_totp(verify_me)):
+		if (not OtpAuth(new_secret).valid_totp(verify_me)):
 			errors['totp_verification'].append(loc.translate(_('Verification code is invalid.')))
 
 	ret['errors'].update(errors)
 
 def _wiz_user_totp_generic_next(wiz, em, step, act, val, req):
+	'''If user.totp_secret is empty, go to creation of new secret code.
+	Disable 2 factor auth otherwise.
+	'''
 	print('aaaaaa')
 	ret = {
 		'do'      : 'goto',
@@ -593,10 +596,21 @@ def dyn_user_chtotp_secret_submit(values, request):
 	salt_len = int(cfg.get('netprofile.auth.salt_length', 4))
 	secret_len = int(cfg.get('netprofile.auth.totp_secret_length', 21))
 	cur_pass = values.get('curpass')
+
+	new_secret = values.get('newsecret') # Should store this not in wizard, but somewhere on the server-side
+
 	if (not cur_pass) or (not user.check_password(cur_pass, hash_con, salt_len)):
-		# Shit happens here - need to debug
+		# Shit happens here (any wizard). Need to debug
 		raise ValueError('Current password is invalid.')
 		return { 'success' : False }
+
+	if (not new_secret):
+		raise ValueError('New code vanished.')
+		return { 'success' : False }
+
+	# Set secret if new one is supplied
+	# TODO: Set to 'NULL' if 2 factor auth disabled in wizard
+	user.totp_secret = new_secret
 
 	return {
 		'success' : True,
