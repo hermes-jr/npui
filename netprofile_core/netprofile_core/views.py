@@ -594,7 +594,9 @@ def dyn_user_chtotp_secret_submit(values, request):
 	secret_len = int(cfg.get('netprofile.auth.totp_secret_length', 21))
 	cur_pass = values.get('curpass')
 	if (not cur_pass) or (not user.check_password(cur_pass, hash_con, salt_len)):
+		# Shit happens here - need to debug
 		raise ValueError('Current password is invalid.')
+		return { 'success' : False }
 
 	return {
 		'success' : True,

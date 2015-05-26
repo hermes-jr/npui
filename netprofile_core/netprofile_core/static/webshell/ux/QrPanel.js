@@ -512,9 +512,9 @@ var qrcode = function () {
 				// specify containing DIV's CSS class, 'QRContainer' as default
 				//var nodeAttribute = document.createAttribute('class');
 				var nodeValue = args.cssClassContainer = args.cssClassContainer || 'QRContainer';
-				treeRoot.setAttribute('class', nodeValue)
+				treeRoot.setAttribute('class', nodeValue);
 
-				treeRoot.setAttributeNode(nodeAttribute);
+				//treeRoot.setAttributeNode(nodeAttribute);
 
 			}
 
@@ -615,7 +615,7 @@ var qrcode = function () {
 					//nodeAttribute = document.createAttribute(attribName);
 					//nodeAttribute.nodeValue = args.divContainerAttributes[attribName];
 					//domCanvas.setAttributeNode(nodeAttribute);
-					domCanvas.setAttribute(attribName, args.divContainerAttributes[attribName])
+					domCanvas.setAttribute(attribName, args.divContainerAttributes[attribName]);
 
 				}
 
