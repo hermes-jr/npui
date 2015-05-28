@@ -453,6 +453,7 @@ def dyn_user_chtotp_wizard(request):
 	secret_len = int(cfg.get('netprofile.auth.totp_secret_length', 21))
 
 	new_secret = user.generate_totp_secret(secret_len)
+	request.session['2factor.newsecret'] = new_secret
 	otpauth = OtpAuth(new_secret)
 	qrcodestr = otpauth.to_uri('totp', user.login, 'NetProfile testing')
 
@@ -565,7 +566,7 @@ def dyn_user_chtotpsecret_validate(ret, values, request):
 	hash_con = cfg.get('netprofile.auth.hash', 'sha1')
 	salt_len = int(cfg.get('netprofile.auth.salt_length', 4))
 	cur_pass = values.get('curpass')
-	new_secret = values.get('newsecret') # Should store this not in wizard, but somewhere on the server-side
+	new_secret = request.session.get('2factor.newsecret', None)
 	if (not cur_pass) or (not user.check_password(cur_pass, hash_con, salt_len)):
 		errors['curpass'].append(loc.translate(_('Current password is invalid.')))
 
@@ -597,7 +598,7 @@ def dyn_user_chtotp_secret_submit(values, request):
 	secret_len = int(cfg.get('netprofile.auth.totp_secret_length', 21))
 	cur_pass = values.get('curpass')
 
-	new_secret = values.get('newsecret') # Should store this not in wizard, but somewhere on the server-side
+	new_secret = request.session.get('2factor.newsecret', None)
 
 	if (not cur_pass) or (not user.check_password(cur_pass, hash_con, salt_len)):
 		# Shit happens here (any wizard). Need to debug
@@ -611,6 +612,7 @@ def dyn_user_chtotp_secret_submit(values, request):
 	# Set secret if new one is supplied
 	# TODO: Set to 'NULL' if 2 factor auth disabled in wizard
 	user.totp_secret = new_secret
+	del request.session['2factor.newsecret']
 
 	return {
 		'success' : True,
