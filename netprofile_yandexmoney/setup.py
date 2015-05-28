@@ -52,6 +52,7 @@ setup(
 		yandexmoney = netprofile_yandexmoney:Module
 		[netprofile.xop.gateways]
 		ymgate = netprofile_yandexmoney:YandexMoney
+		ymkassagate = netprofile_yandexmoney:YandexKassa
 	""",
 	message_extractors={'.' : [
 		('**.py', 'python', None),
